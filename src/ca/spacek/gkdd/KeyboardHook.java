@@ -2,6 +2,8 @@ package ca.spacek.gkdd;
 
 import java.lang.reflect.Proxy;
 
+import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
+
 import android.content.Context;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -68,8 +70,17 @@ public class KeyboardHook implements IXposedHookLoadPackage {
 
 	private Object createProxyInstance(final LoadPackageParam lpparam,
 			final Class<?> callbackInterface, final Object original, Context context) {
+		BlackList blackList = initBlackList(context);
+		
 		return Proxy.newProxyInstance(lpparam.classLoader,
 				new Class<?>[] { callbackInterface },
-				new OnSuggestedWordCallbackHandler(original, context));
+				new OnSuggestedWordCallbackHandler(original, blackList));
+	}
+
+	private CachedBlackList initBlackList(Context context) {
+		CachedBlackList blackList = new CachedBlackList(context);
+		CachedBlackListDictionaryWordContentObserver observer = new CachedBlackListDictionaryWordContentObserver(null, blackList);
+		context.getContentResolver().registerContentObserver(DictionaryWordContentProvider.CONTENT_URI, true, observer);
+		return blackList;
 	}
 }
