@@ -2,12 +2,17 @@ package ca.spacek.gkdd;
 
 import java.lang.reflect.Proxy;
 
-import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
-
+import android.content.ContentValues;
 import android.content.Context;
+import android.view.View;
+import android.widget.Toast;
+import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
+import ca.spacek.gkdd.data.DictionaryWordTable;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class KeyboardHook implements IXposedHookLoadPackage {
@@ -16,7 +21,8 @@ public class KeyboardHook implements IXposedHookLoadPackage {
 
 	private static final String CLASS_SUGGEST = "Suggest";
 	private static final String CLASS_CALLBACK = "Suggest$OnGetSuggestedWordsCallback";
-	
+	private static final String CLASS_SUGGESTION_STRIP_VIEW = "suggestions.SuggestionStripView";
+
 	private Context context;
 
 	@Override
@@ -31,7 +37,9 @@ public class KeyboardHook implements IXposedHookLoadPackage {
 				CLASS_CALLBACK);
 		final Class<?> suggestClass = loadClass(lpparam.classLoader,
 				CLASS_SUGGEST);
-		
+		final Class<?> suggestionStripViewClass = loadClass(
+				lpparam.classLoader, CLASS_SUGGESTION_STRIP_VIEW);
+
 		XposedBridge.hookAllConstructors(suggestClass, new XC_MethodHook() {
 			@Override
 			protected void beforeHookedMethod(MethodHookParam param)
@@ -40,6 +48,26 @@ public class KeyboardHook implements IXposedHookLoadPackage {
 				context = (Context) param.args[0];
 			}
 		});
+
+		XposedHelpers.findAndHookMethod(suggestionStripViewClass,
+				"onLongClick", View.class, new XC_MethodReplacement() {
+					@Override
+					protected Object replaceHookedMethod(MethodHookParam param)
+							throws Throwable {
+						Object layoutHelper = XposedHelpers.getObjectField(param.thisObject, "mLayoutHelper");
+						String word = (String) XposedHelpers.callMethod(layoutHelper, "getAddToDictionaryWord");
+						
+						ContentValues values = new ContentValues();
+						values.put(DictionaryWordTable.COLUMN_WORD, word);
+						
+						View view = (View) param.args[0];
+						view.getContext().getContentResolver().insert(DictionaryWordContentProvider.CONTENT_URI, values);
+						
+						Toast.makeText(context, "Added word to blacklist!", Toast.LENGTH_SHORT).show();
+						
+						return false;
+					}
+				});
 
 		XposedBridge.hookAllMethods(suggestClass, "getSuggestedWords",
 				new XC_MethodHook() {
@@ -51,14 +79,15 @@ public class KeyboardHook implements IXposedHookLoadPackage {
 						replaceCallbackWithProxy(param, context);
 					}
 
-					private void replaceCallbackWithProxy(MethodHookParam param, Context context) {
+					private void replaceCallbackWithProxy(
+							MethodHookParam param, Context context) {
 						final Object original = param.args[param.args.length - 1];
 						param.args[param.args.length - 1] = createProxyInstance(
 								lpparam, callbackInterface, original, context);
 					}
 				});
 	}
-	
+
 	private Context getContext(Object suggestInstance) {
 		return context;
 	}
@@ -69,9 +98,10 @@ public class KeyboardHook implements IXposedHookLoadPackage {
 	}
 
 	private Object createProxyInstance(final LoadPackageParam lpparam,
-			final Class<?> callbackInterface, final Object original, Context context) {
+			final Class<?> callbackInterface, final Object original,
+			Context context) {
 		BlackList blackList = initBlackList(context);
-		
+
 		return Proxy.newProxyInstance(lpparam.classLoader,
 				new Class<?>[] { callbackInterface },
 				new OnSuggestedWordCallbackHandler(original, blackList));
@@ -79,8 +109,10 @@ public class KeyboardHook implements IXposedHookLoadPackage {
 
 	private CachedBlackList initBlackList(Context context) {
 		CachedBlackList blackList = new CachedBlackList(context);
-		CachedBlackListDictionaryWordContentObserver observer = new CachedBlackListDictionaryWordContentObserver(null, blackList);
-		context.getContentResolver().registerContentObserver(DictionaryWordContentProvider.CONTENT_URI, true, observer);
+		CachedBlackListDictionaryWordContentObserver observer = new CachedBlackListDictionaryWordContentObserver(
+				null, blackList);
+		context.getContentResolver().registerContentObserver(
+				DictionaryWordContentProvider.CONTENT_URI, true, observer);
 		return blackList;
 	}
 }

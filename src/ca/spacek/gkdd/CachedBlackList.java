@@ -7,6 +7,7 @@ import java.util.TreeSet;
 import android.content.Context;
 import android.database.Cursor;
 import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
+import ca.spacek.gkdd.data.DictionaryWordTable;
 import de.robv.android.xposed.XposedBridge;
 
 public class CachedBlackList implements BlackList {
@@ -33,7 +34,7 @@ public class CachedBlackList implements BlackList {
 
 		Cursor cursor = context.getContentResolver().query(
 				DictionaryWordContentProvider.CONTENT_URI,
-				new String[] { "_id", "word" }, null, null, null);
+				new String[] { DictionaryWordTable.COLUMN_ID, DictionaryWordTable.COLUMN_WORD }, null, null, null);
 
 		if (!cursor.moveToFirst()) {
 			return;
