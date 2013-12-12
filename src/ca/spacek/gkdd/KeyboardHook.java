@@ -2,15 +2,11 @@ package ca.spacek.gkdd;
 
 import java.lang.reflect.Proxy;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.view.View;
-import android.widget.Toast;
 import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
-import ca.spacek.gkdd.data.DictionaryWordTable;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
@@ -44,37 +40,18 @@ public class KeyboardHook implements IXposedHookLoadPackage {
 			@Override
 			protected void beforeHookedMethod(MethodHookParam param)
 					throws Throwable {
-				XposedBridge.log("Creating instance of Suggest");
 				context = (Context) param.args[0];
 			}
 		});
 
 		XposedHelpers.findAndHookMethod(suggestionStripViewClass,
-				"onLongClick", View.class, new XC_MethodReplacement() {
-					@Override
-					protected Object replaceHookedMethod(MethodHookParam param)
-							throws Throwable {
-						Object layoutHelper = XposedHelpers.getObjectField(param.thisObject, "mLayoutHelper");
-						String word = (String) XposedHelpers.callMethod(layoutHelper, "getAddToDictionaryWord");
-						
-						ContentValues values = new ContentValues();
-						values.put(DictionaryWordTable.COLUMN_WORD, word);
-						
-						View view = (View) param.args[0];
-						view.getContext().getContentResolver().insert(DictionaryWordContentProvider.CONTENT_URI, values);
-						
-						Toast.makeText(context, "Added word to blacklist!", Toast.LENGTH_SHORT).show();
-						
-						return false;
-					}
-				});
+				"onLongClick", View.class, new LongPressReplacementMethod());
 
 		XposedBridge.hookAllMethods(suggestClass, "getSuggestedWords",
 				new XC_MethodHook() {
 					@Override
 					protected void beforeHookedMethod(MethodHookParam param)
 							throws Throwable {
-						XposedBridge.log("Before keyboard suggest");
 						Context context = getContext(param.thisObject);
 						replaceCallbackWithProxy(param, context);
 					}
