@@ -22,7 +22,7 @@ import android.widget.SimpleCursorAdapter;
 import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
 import ca.spacek.gkdd.data.DictionaryWordTable;
 
-public class DictionaryWordsList extends ListActivity implements
+public class DictionaryWordsListActivity extends ListActivity implements
 		LoaderCallbacks<Cursor> {
 	// Seems like a weird way to define this
 	private static final int DELETE_ID = Menu.FIRST + 1;
@@ -38,10 +38,7 @@ public class DictionaryWordsList extends ListActivity implements
 	}
 
 	private void fillData() {
-		// Fields from the database (projection)
-		// Must include the _id column for the adapter to work
 		String[] from = new String[] { DictionaryWordTable.COLUMN_WORD };
-		// Fields on the UI to which we map
 		int[] to = new int[] { R.id.label };
 
 		getLoaderManager().initLoader(0, null, this);
@@ -53,7 +50,6 @@ public class DictionaryWordsList extends ListActivity implements
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.dictionary_words_list, menu);
 		return true;
 	}
@@ -70,7 +66,7 @@ public class DictionaryWordsList extends ListActivity implements
 
 	private void addWord() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Title");
+		builder.setTitle("Enter word");
 
 		final EditText input = new EditText(this);
 		input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -81,7 +77,8 @@ public class DictionaryWordsList extends ListActivity implements
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				ContentValues values = new ContentValues();
-				values.put("word", input.getText().toString());
+				values.put(DictionaryWordTable.COLUMN_WORD, input.getText()
+						.toString());
 				getContentResolver().insert(
 						DictionaryWordContentProvider.CONTENT_URI, values);
 			}

@@ -30,7 +30,7 @@
             android:value="Allows &quot;deletion&quot; of words from the built-in dictionary" />
 
         <activity
-            android:name="ca.spacek.gkdd.DictionaryWordsList"
+            android:name="ca.spacek.gkdd.DictionaryWordsListActivity"
             android:label="@string/title_activity_dictionary_words_list" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
