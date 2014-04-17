@@ -1,0 +1,25 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.9.0'
+    }
+}
+
+apply plugin: 'android'
+
+android {
+    compileSdkVersion 'rovo89:xposed-bridge-api-42:15'
+    buildToolsVersion '19.0.3'
+}
+
+dependencies {
+    compile 'com.android.support:support-v4:19.1.0'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
