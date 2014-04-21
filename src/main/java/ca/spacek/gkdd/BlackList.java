@@ -1,5 +1,5 @@
 package ca.spacek.gkdd;
 
 public interface BlackList {
-	boolean containsWord(String word);
+	boolean contains(String word);
 }

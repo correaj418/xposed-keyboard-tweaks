@@ -15,16 +15,16 @@ public class CachedBlackListDictionaryWordContentObserver extends
 		this.cachedBlackList = cachedBlackList;
 	}
 
-	@Override
-	public void onChange(boolean selfChange) {
-		onChange(selfChange, null);
-	}
+//	@Override
+//	public void onChange(boolean selfChange) {
+//		onChange(selfChange, null);
+//	}
 
-	@Override
-	public void onChange(boolean selfChange, Uri uri) {
-		if (!uri.equals(DictionaryWordContentProvider.CONTENT_URI)) {
-			return;
-		}
-		cachedBlackList.flagDirty();
-	}
+//	@Override
+//	public void onChange(boolean selfChange, Uri uri) {
+//		if (!uri.equals(DictionaryWordContentProvider.CONTENT_URI)) {
+//			return;
+//		}
+//		cachedBlackList.flagDirty();
+//	}
 }

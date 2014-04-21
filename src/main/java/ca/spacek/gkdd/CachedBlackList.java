@@ -20,7 +20,7 @@ public class CachedBlackList implements BlackList {
 	}
 
 	@Override
-	public boolean containsWord(String word) {
+	public boolean contains(String word) {
 		if (dirty) {
 			refresh();
 		}

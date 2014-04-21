@@ -38,6 +38,6 @@ final class OnSuggestedWordCallbackHandler implements InvocationHandler {
 
 	private boolean isWordInDeletes(String word) {
 		XposedBridge.log("Checking if " + word + " is in delete dictionary");
-		return blackList.containsWord(word);
+		return blackList.contains(word);
 	}
 }
