@@ -1,4 +1,4 @@
-package ca.spacek.gkdd.blacklist.proxy;
+package ca.spacek.gkdd.blacklist;
 
 /**
  * Created by temp on 20/04/14.
@@ -11,6 +11,11 @@ public class SuggestedWordInfo {
     }
 
     public String getWord() {
+        return word;
+    }
+
+    @Override
+    public String toString() {
         return word;
     }
 }

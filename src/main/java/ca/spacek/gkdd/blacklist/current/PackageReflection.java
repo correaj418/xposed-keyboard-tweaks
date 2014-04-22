@@ -10,8 +10,10 @@ import java.util.List;
 import ca.spacek.gkdd.blacklist.DefaultSuggestedWordInfoConverter;
 import ca.spacek.gkdd.blacklist.ReflectionException;
 import ca.spacek.gkdd.blacklist.SuggestedWordInfoConverter;
-import ca.spacek.gkdd.blacklist.proxy.SuggestedWordInfo;
+import ca.spacek.gkdd.blacklist.SuggestedWordInfo;
 import de.robv.android.xposed.XposedHelpers;
+
+import static com.google.common.collect.Lists.transform;
 
 /**
  * Created by temp on 21/04/14.
@@ -105,7 +107,7 @@ public class PackageReflection {
             throw new RuntimeException("SuggestedWordInfo class did not match expected: " + wordInfo.getClass().getName());
         }
 
-        return converter.convert(wordInfoList);
+        return transform(wordInfoList, new SuggestedWordInfoTransform());
     }
 
     public Context getMainKeyboardViewConstructorContextArg(Object[] args) {

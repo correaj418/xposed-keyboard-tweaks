@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 import ca.spacek.gkdd.blacklist.current.PackageReflection;
-import ca.spacek.gkdd.blacklist.proxy.SuggestedWordInfo;
 import de.robv.android.xposed.XposedHelpers;
 
 /**

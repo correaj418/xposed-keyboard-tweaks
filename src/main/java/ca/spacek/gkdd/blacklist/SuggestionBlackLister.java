@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import ca.spacek.gkdd.BlackList;
-import ca.spacek.gkdd.blacklist.proxy.SuggestedWordInfo;
 
 /**
  * Created by temp on 20/04/14.

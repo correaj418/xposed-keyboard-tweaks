@@ -1,12 +1,15 @@
 package ca.spacek.gkdd.blacklist.current;
 
+import android.util.Log;
+
+import com.google.common.base.Joiner;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
 
 import ca.spacek.gkdd.blacklist.SuggestionBlackLister;
-import ca.spacek.gkdd.blacklist.current.PackageReflection;
-import ca.spacek.gkdd.blacklist.proxy.SuggestedWordInfo;
+import ca.spacek.gkdd.blacklist.SuggestedWordInfo;
 import de.robv.android.xposed.XposedBridge;
 
 public class OnSuggestedWordCallbackHandler implements InvocationHandler {
@@ -24,7 +27,13 @@ public class OnSuggestedWordCallbackHandler implements InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		List<SuggestedWordInfo> wordInfoList = packageReflection.getCallbackHandlerWordListArg(args);
-		suggestionBlackLister.filterResults(wordInfoList);
+        Log.d("blacklist", words(wordInfoList));
+        suggestionBlackLister.filterResults(wordInfoList);
+        Log.d("blacklist", words(wordInfoList));
 		return method.invoke(original, args);
 	}
+
+    private String words(List<SuggestedWordInfo> wordList) {
+        return Joiner.on(',').join(wordList);
+    }
 }

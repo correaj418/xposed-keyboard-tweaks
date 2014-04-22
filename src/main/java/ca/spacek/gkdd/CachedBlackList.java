@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import android.database.Cursor;
+import android.util.Log;
 
 import ca.spacek.gkdd.blacklist.current.ContextAccessor;
 import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
@@ -23,9 +24,11 @@ public class CachedBlackList implements BlackList {
 	@Override
 	public boolean contains(String word) {
 		if (dirty) {
-			refresh();
+            Log.d("blacklist", "Was dirty, refreshing");
+            refresh();
 		}
 
+        Log.d("blacklist", "Checking if blacklist contains " + word);
 		return words.contains(word);
 	}
 
@@ -47,9 +50,11 @@ public class CachedBlackList implements BlackList {
 
 		do {
 			String word = cursor.getString(1);
-			XposedBridge.log("Adding word: " + word);
+			Log.d("blacklist", "Adding word: " + word);
 			words.add(word);
 		} while (cursor.moveToNext());
+
+        Log.i("blacklist", "Using blacklist of " + words.size() + " words");
 	}
 
 	private static Comparator<String> CASE_INSENSITVE = new Comparator<String>() {
