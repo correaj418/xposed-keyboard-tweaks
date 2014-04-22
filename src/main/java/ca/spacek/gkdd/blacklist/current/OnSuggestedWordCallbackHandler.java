@@ -25,7 +25,6 @@ public class OnSuggestedWordCallbackHandler implements InvocationHandler {
 			throws Throwable {
 		List<SuggestedWordInfo> wordInfoList = packageReflection.getCallbackHandlerWordListArg(args);
 		suggestionBlackLister.filterResults(wordInfoList);
-		XposedBridge.log("Invoking original: " + args);
 		return method.invoke(original, args);
 	}
 }

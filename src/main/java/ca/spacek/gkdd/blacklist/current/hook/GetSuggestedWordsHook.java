@@ -21,15 +21,8 @@ public class GetSuggestedWordsHook {
         XposedBridge.hookMethod(packageReflection.getGetSuggestedWordsMethod(), new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("Before getSuggestedWordsMethod");
                 packageReflection.replaceCallbackArg(param.args, factory);
                 super.beforeHookedMethod(param);
-            }
-
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("After getSuggestedWordsMethod");
-                super.afterHookedMethod(param);
             }
         });
     }
