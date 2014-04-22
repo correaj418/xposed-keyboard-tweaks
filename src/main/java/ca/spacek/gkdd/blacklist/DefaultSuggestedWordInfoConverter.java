@@ -1,27 +1,28 @@
 package ca.spacek.gkdd.blacklist;
 
+import com.google.common.collect.Lists;
+
+import java.util.List;
+
+import ca.spacek.gkdd.blacklist.current.PackageReflection;
 import ca.spacek.gkdd.blacklist.proxy.SuggestedWordInfo;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 
 /**
  * Created by temp on 21/04/14.
  */
 public class DefaultSuggestedWordInfoConverter implements SuggestedWordInfoConverter {
-    public static final String ANDROID_SUGGESTED_WORD_INFO_CLASS = "com.android.inputmethod.latin.SuggestedWords$SuggestedWordInfo";
-    public static final String FIELD_WORD = "mWord";
-
     @Override
-    public boolean supports(Object object) {
-        String className = object.getClass().getName();
-        XposedBridge.log("Seeing if we can convert " + className);
-
-        return className.equals(ANDROID_SUGGESTED_WORD_INFO_CLASS)
-                && XposedHelpers.findField(object.getClass(), FIELD_WORD) != null;
+    public SuggestedWordInfo convert(Object object) {
+        return new SuggestedWordInfo((String) XposedHelpers.getObjectField(object, PackageReflection.FIELD_WORD));
     }
 
     @Override
-    public SuggestedWordInfo convert(Object object) {
-        return new SuggestedWordInfo((String) XposedHelpers.getObjectField(object, FIELD_WORD));
+    public List<SuggestedWordInfo> convert(Iterable<?> unknownWordInfoList) {
+        List<SuggestedWordInfo> wordInfoList = Lists.newArrayList();
+        for (Object unknownWordInfo : unknownWordInfoList) {
+            wordInfoList.add(convert(unknownWordInfo));
+        }
+        return wordInfoList;
     }
 }

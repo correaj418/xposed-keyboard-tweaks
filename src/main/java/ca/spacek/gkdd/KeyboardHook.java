@@ -4,7 +4,7 @@ import java.lang.reflect.Proxy;
 
 import android.content.Context;
 import android.view.View;
-import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -81,15 +81,17 @@ public class KeyboardHook implements IXposedHookLoadPackage {
 
 		return Proxy.newProxyInstance(lpparam.classLoader,
 				new Class<?>[] { callbackInterface },
-				new OnSuggestedWordCallbackHandler(original, blackList));
+//				new OnSuggestedWordCallbackHandler(original, blackList));
+                null);
 	}
 
 	private CachedBlackList initBlackList(Context context) {
-		CachedBlackList blackList = new CachedBlackList(context);
-		CachedBlackListDictionaryWordContentObserver observer = new CachedBlackListDictionaryWordContentObserver(
-				null, blackList);
-		context.getContentResolver().registerContentObserver(
-				DictionaryWordContentProvider.CONTENT_URI, true, observer);
-		return blackList;
+//		CachedBlackList blackList = new CachedBlackList(context);
+//		CachedBlackListDictionaryWordContentObserver observer = new CachedBlackListDictionaryWordContentObserver(
+//				null, blackList);
+//		context.getContentResolver().registerContentObserver(
+//				DictionaryWordContentProvider.CONTENT_URI, true, observer);
+//		return blackList;
+        return null;
 	}
 }

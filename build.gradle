@@ -16,8 +16,14 @@ android {
     buildToolsVersion '19.0.3'
 }
 
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
 dependencies {
     compile 'com.android.support:support-v4:19.1.0'
+    compile 'com.google.guava:guava:17.0-rc2'
 }
 
 task wrapper(type: Wrapper) {

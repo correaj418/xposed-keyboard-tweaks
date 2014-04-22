@@ -1,5 +1,6 @@
 package ca.spacek.gkdd;
 
+import de.robv.android.xposed.callbacks.XC_InitPackageResources;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 /**

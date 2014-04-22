@@ -1,7 +1,7 @@
-package ca.spacek.gkdd.blacklist.injector;
+package ca.spacek.gkdd.blacklist.current.hook;
 
-import android.content.Context;
-
+import ca.spacek.gkdd.blacklist.current.OnSuggestedWordCallbackProxyFactory;
+import ca.spacek.gkdd.blacklist.current.PackageReflection;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 
@@ -10,9 +10,11 @@ import de.robv.android.xposed.XposedBridge;
  */
 public class GetSuggestedWordsHook {
     private final PackageReflection packageReflection;
+    private final OnSuggestedWordCallbackProxyFactory factory;
 
-    public GetSuggestedWordsHook(PackageReflection packageReflection) {
+    public GetSuggestedWordsHook(PackageReflection packageReflection, OnSuggestedWordCallbackProxyFactory factory) {
         this.packageReflection = packageReflection;
+        this.factory = factory;
     }
 
     public void hook() {
@@ -20,6 +22,7 @@ public class GetSuggestedWordsHook {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 XposedBridge.log("Before getSuggestedWordsMethod");
+                packageReflection.replaceCallbackArg(param.args, factory);
                 super.beforeHookedMethod(param);
             }
 

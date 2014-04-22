@@ -4,19 +4,20 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import android.content.Context;
 import android.database.Cursor;
+
+import ca.spacek.gkdd.blacklist.current.ContextAccessor;
 import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
 import ca.spacek.gkdd.data.DictionaryWordTable;
 import de.robv.android.xposed.XposedBridge;
 
 public class CachedBlackList implements BlackList {
-	private final Context context;
+	private final ContextAccessor contextAccessor;
 	private Set<String> words = new TreeSet<String>(CASE_INSENSITVE);
 	private boolean dirty = true;
 
-	public CachedBlackList(Context context) {
-		this.context = context;
+	public CachedBlackList(ContextAccessor contextAccessor) {
+		this.contextAccessor = contextAccessor;
 	}
 
 	@Override
@@ -32,7 +33,11 @@ public class CachedBlackList implements BlackList {
 		dirty = false;
 		words.clear();
 
-		Cursor cursor = context.getContentResolver().query(
+        if (!contextAccessor.get().isPresent()) {
+            return;
+        }
+
+        Cursor cursor = contextAccessor.get().get().getContentResolver().query(
 				DictionaryWordContentProvider.CONTENT_URI,
 				new String[] { DictionaryWordTable.COLUMN_ID, DictionaryWordTable.COLUMN_WORD }, null, null, null);
 
