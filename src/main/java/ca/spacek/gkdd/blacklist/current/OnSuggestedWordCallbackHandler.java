@@ -9,8 +9,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import ca.spacek.gkdd.blacklist.SuggestionBlackLister;
-import ca.spacek.gkdd.blacklist.SuggestedWordInfo;
-import de.robv.android.xposed.XposedBridge;
 
 public class OnSuggestedWordCallbackHandler implements InvocationHandler {
 	private final Object original;
@@ -26,14 +24,10 @@ public class OnSuggestedWordCallbackHandler implements InvocationHandler {
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
-		List<SuggestedWordInfo> wordInfoList = packageReflection.getCallbackHandlerWordListArg(args);
-        Log.d("blacklist", words(wordInfoList));
+		List<String> wordInfoList = packageReflection.getCallbackHandlerWordListArg(args);
+        Log.d("blacklist", Joiner.on(',').join(wordInfoList));
         suggestionBlackLister.filterResults(wordInfoList);
-        Log.d("blacklist", words(wordInfoList));
+        Log.d("blacklist", Joiner.on(',').join(wordInfoList));
 		return method.invoke(original, args);
 	}
-
-    private String words(List<SuggestedWordInfo> wordList) {
-        return Joiner.on(',').join(wordList);
-    }
 }

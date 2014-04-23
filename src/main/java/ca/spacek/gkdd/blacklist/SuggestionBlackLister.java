@@ -15,10 +15,10 @@ public class SuggestionBlackLister {
         this.blackList = blackList;
     }
 
-    public void filterResults(List<SuggestedWordInfo> wordInfos) {
-        for (Iterator<SuggestedWordInfo> iterator = wordInfos.iterator(); iterator.hasNext(); ) {
-            SuggestedWordInfo next = iterator.next();
-            if (blackList.contains(next.getWord())) {
+    public void filterResults(List<String> words) {
+        for (Iterator<String> iterator = words.iterator(); iterator.hasNext(); ) {
+            String next = iterator.next();
+            if (blackList.contains(next)) {
                 iterator.remove();
             }
         }

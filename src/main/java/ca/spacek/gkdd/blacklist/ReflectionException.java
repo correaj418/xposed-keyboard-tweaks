@@ -11,4 +11,8 @@ public class ReflectionException extends Exception {
     public ReflectionException(String detailMessage) {
         super(detailMessage);
     }
+
+    public ReflectionException(String detailMessage, Throwable throwable) {
+        super(detailMessage, throwable);
+    }
 }
