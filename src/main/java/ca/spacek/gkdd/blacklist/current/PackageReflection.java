@@ -227,14 +227,5 @@ public class PackageReflection {
             Log.e("blacklist", "Couldn't update suggested words", e);
             return;
         }
-
-        if (!words.isEmpty()) {
-            int index = 0;
-            try {
-                pickSuggestionManuallyMethod.invoke(XposedHelpers.getObjectField(thisObject, FIELD_LISTENER), index, suggestedWordInfos.get(index));
-            } catch (Exception e) {
-                Log.e("blacklist", "Couldn't auto-pick next best word", e);
-            }
-        }
     }
 }
