@@ -25,9 +25,7 @@ public class OnSuggestedWordCallbackHandler implements InvocationHandler {
 	public Object invoke(Object proxy, Method method, Object[] args)
 			throws Throwable {
 		List<String> wordInfoList = packageReflection.getCallbackHandlerWordListArg(args);
-        Log.d("blacklist", Joiner.on(',').join(wordInfoList));
         suggestionBlackLister.filterResults(wordInfoList);
-        Log.d("blacklist", Joiner.on(',').join(wordInfoList));
 		return method.invoke(original, args);
 	}
 }
