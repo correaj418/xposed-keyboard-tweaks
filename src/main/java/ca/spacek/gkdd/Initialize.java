@@ -3,7 +3,7 @@ package ca.spacek.gkdd;
 import java.util.ArrayList;
 import java.util.List;
 
-import ca.spacek.gkdd.blacklist.current.CurrentGoogleKeyboardInjector;
+import ca.spacek.gkdd.blacklist.gk.CurrentGoogleKeyboardInjector;
 import de.robv.android.xposed.IXposedHookInitPackageResources;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.callbacks.XC_InitPackageResources;

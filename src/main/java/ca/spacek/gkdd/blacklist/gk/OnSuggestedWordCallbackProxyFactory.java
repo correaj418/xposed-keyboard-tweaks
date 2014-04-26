@@ -1,4 +1,4 @@
-package ca.spacek.gkdd.blacklist.current;
+package ca.spacek.gkdd.blacklist.gk;
 
 import com.google.common.reflect.Reflection;
 

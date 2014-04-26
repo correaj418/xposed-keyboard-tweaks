@@ -1,8 +1,4 @@
-package ca.spacek.gkdd.blacklist.current;
-
-import android.util.Log;
-
-import com.google.common.base.Joiner;
+package ca.spacek.gkdd.blacklist.gk;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

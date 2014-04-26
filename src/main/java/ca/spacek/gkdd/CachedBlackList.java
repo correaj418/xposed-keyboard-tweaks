@@ -7,10 +7,9 @@ import java.util.TreeSet;
 import android.database.Cursor;
 import android.util.Log;
 
-import ca.spacek.gkdd.blacklist.current.ContextAccessor;
+import ca.spacek.gkdd.blacklist.gk.ContextAccessor;
 import ca.spacek.gkdd.contentprovider.DictionaryWordContentProvider;
 import ca.spacek.gkdd.data.DictionaryWordTable;
-import de.robv.android.xposed.XposedBridge;
 
 public class CachedBlackList implements BlackList {
 	private final ContextAccessor contextAccessor;

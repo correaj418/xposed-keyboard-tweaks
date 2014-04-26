@@ -1,4 +1,4 @@
-package ca.spacek.gkdd.blacklist.current;
+package ca.spacek.gkdd.blacklist.gk;
 
 import android.content.Context;
 
