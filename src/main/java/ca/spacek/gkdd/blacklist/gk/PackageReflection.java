@@ -224,7 +224,6 @@ public class PackageReflection {
             setSuggestedWordsMethod.invoke(thisObject, suggestedWords, false);
         } catch (Exception e) {
             Log.e("blacklist", "Couldn't update suggested words", e);
-            return;
         }
     }
 }
