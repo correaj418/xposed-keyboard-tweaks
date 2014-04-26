@@ -3,6 +3,7 @@ package ca.spacek.gkdd.contentprovider;
 import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -73,12 +74,20 @@ public class DictionaryWordContentProvider extends ContentProvider {
 		SQLiteDatabase db = database.getWritableDatabase();
 		Cursor cursor = queryBuilder.query(db, projection, selection,
 				selectionArgs, null, null, sortOrder);
-		cursor.setNotificationUri(getContext().getContentResolver(), uri);
+		cursor.setNotificationUri(getContentResolver(), uri);
 
 		return cursor;
 	}
 
-	@Override
+    private ContentResolver getContentResolver() {
+        Context context = getContext();
+        if (context == null) {
+            throw new NullPointerException("Context was null, shouldn't happen");
+        }
+        return context.getContentResolver();
+    }
+
+    @Override
 	public Uri insert(Uri uri, ContentValues values) {
 		int uriType = MATCHER.match(uri);
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
@@ -91,7 +100,7 @@ public class DictionaryWordContentProvider extends ContentProvider {
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		getContentResolver().notifyChange(uri, null);
 		return Uri.parse(BASE_PATH + "/" + id);
 	}
 
@@ -100,8 +109,9 @@ public class DictionaryWordContentProvider extends ContentProvider {
 			String[] selectionArgs) {
 		int uriType = MATCHER.match(uri);
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
-		int rowsUpdated = 0;
-		switch (uriType) {
+		int rowsUpdated;
+
+        switch (uriType) {
 		case DICTIONARY_WORDS:
 			rowsUpdated = sqlDB.update(
 					DictionaryWordTable.TABLE_DICTIONARY_WORD, values,
@@ -123,7 +133,7 @@ public class DictionaryWordContentProvider extends ContentProvider {
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		getContentResolver().notifyChange(uri, null);
 		return rowsUpdated;
 	}
 
@@ -131,7 +141,8 @@ public class DictionaryWordContentProvider extends ContentProvider {
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		int uriType = MATCHER.match(uri);
 		SQLiteDatabase sqlDB = database.getWritableDatabase();
-		int rowsDeleted = 0;
+
+        int rowsDeleted;
 		switch (uriType) {
 		case DICTIONARY_WORDS:
 			rowsDeleted = sqlDB.delete(
@@ -154,7 +165,7 @@ public class DictionaryWordContentProvider extends ContentProvider {
 		default:
 			throw new IllegalArgumentException("Unknown URI: " + uri);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		getContentResolver().notifyChange(uri, null);
 		return rowsDeleted;
 	}
 

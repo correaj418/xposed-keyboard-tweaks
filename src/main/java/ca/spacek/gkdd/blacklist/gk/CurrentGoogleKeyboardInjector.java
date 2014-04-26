@@ -17,7 +17,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  * Created by temp on 20/04/14.
  */
 public class CurrentGoogleKeyboardInjector implements Injector {
-    private ContextAccessor contextAccessor = new ContextAccessor();
+    private ContextManager contextManager;
 
     private PackageReflection packageReflection;
     private ProfileGetSuggestedWordsHook getSuggestedWordsHook;
@@ -46,10 +46,12 @@ public class CurrentGoogleKeyboardInjector implements Injector {
     public void inject(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         XposedBridge.log("Initialized, hooking");
 
-        contextChangeHook = new ProfileContextChangeHook(contextAccessor, packageReflection);
+        contextManager = new ContextManager(null);
+
+        contextChangeHook = new ProfileContextChangeHook(contextManager, packageReflection);
         contextChangeHook.hookContextChange();
 
-        BlackList blackList = new CachedBlackList(contextAccessor);
+        BlackList blackList = new CachedBlackList(contextManager);
         getSuggestedWordsHook = new ProfileGetSuggestedWordsHook(packageReflection, new OnSuggestedWordCallbackProxyFactory(new SuggestionBlackLister(blackList), packageReflection));
         getSuggestedWordsHook.hookSuggestWords();
 

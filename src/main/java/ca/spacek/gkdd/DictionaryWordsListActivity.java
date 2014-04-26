@@ -10,7 +10,9 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -77,8 +79,12 @@ public class DictionaryWordsListActivity extends ListActivity implements
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				ContentValues values = new ContentValues();
-				values.put(DictionaryWordTable.COLUMN_WORD, input.getText()
-						.toString());
+                Editable text = input.getText();
+                if (text == null) {
+                    Log.e("blacklist", "Can't insert blacklist word, input.getText() was null");
+                    return;
+                }
+                values.put(DictionaryWordTable.COLUMN_WORD, text.toString());
 				getContentResolver().insert(
 						DictionaryWordContentProvider.CONTENT_URI, values);
 			}
@@ -107,11 +113,13 @@ public class DictionaryWordsListActivity extends ListActivity implements
 		case DELETE_ID:
 			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 					.getMenuInfo();
-			Uri uri = Uri.parse(DictionaryWordContentProvider.CONTENT_URI + "/"
-					+ info.id);
-			getContentResolver().delete(uri, null, null);
-			fillData();
-			return true;
+            if (info != null) {
+                Uri uri = Uri.parse(DictionaryWordContentProvider.CONTENT_URI + "/"
+                        + info.id);
+                getContentResolver().delete(uri, null, null);
+                fillData();
+                return true;
+            }
 		}
 		return super.onContextItemSelected(item);
 	}

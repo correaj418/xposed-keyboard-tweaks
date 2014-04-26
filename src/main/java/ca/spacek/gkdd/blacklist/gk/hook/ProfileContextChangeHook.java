@@ -1,7 +1,9 @@
 package ca.spacek.gkdd.blacklist.gk.hook;
 
+import android.content.Context;
+
 import ca.spacek.gkdd.blacklist.ContextChangeHook;
-import ca.spacek.gkdd.blacklist.gk.ContextAccessor;
+import ca.spacek.gkdd.blacklist.gk.ContextManager;
 import ca.spacek.gkdd.blacklist.gk.PackageReflection;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
@@ -10,11 +12,11 @@ import de.robv.android.xposed.XposedBridge;
  * Created by temp on 22/04/14.
  */
 public class ProfileContextChangeHook implements ContextChangeHook {
-    private final ContextAccessor contextAccessor;
+    private final ContextManager contextManager;
     private final PackageReflection packageReflection;
 
-    public ProfileContextChangeHook(ContextAccessor contextAccessor, PackageReflection packageReflection) {
-        this.contextAccessor = contextAccessor;
+    public ProfileContextChangeHook(ContextManager contextManager, PackageReflection packageReflection) {
+        this.contextManager = contextManager;
         this.packageReflection = packageReflection;
     }
 
@@ -24,7 +26,8 @@ public class ProfileContextChangeHook implements ContextChangeHook {
             @Override
             protected void beforeHookedMethod(MethodHookParam param)
                     throws Throwable {
-                contextAccessor.set(packageReflection.getMainKeyboardViewConstructorContextArg(param.args));
+                Context context = packageReflection.getMainKeyboardViewConstructorContextArg(param.args);
+                contextManager.update(context);
             }
         });
     }
