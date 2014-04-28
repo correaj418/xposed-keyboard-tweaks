@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Xposed Keyboard Tweaks</string>
+    <string name="app_name">Keyboard Tweaks for Xposed</string>
+    <string name="app_short_name">Keyboard Tweaks</string>
     <string name="no_dictionary_words">No deletions added to the dictionary</string>
     <string name="add_dictionary_word">Add</string>
     <string name="title_activity_dictionary_words_list">Manage Blacklist</string>
