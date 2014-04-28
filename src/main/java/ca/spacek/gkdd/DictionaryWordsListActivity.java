@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Loader;
@@ -18,6 +19,8 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
@@ -31,13 +34,55 @@ public class DictionaryWordsListActivity extends ListActivity implements
     private static final int DELETE_ID = Menu.FIRST + 1;
 
     private SimpleCursorAdapter adapter;
+    private AlertDialog addWordDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dictionary_words_list);
         fillData();
+        createDialog();
         registerForContextMenu(getListView());
+    }
+
+    private void createDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter word");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ContentValues values = new ContentValues();
+                Editable text = input.getText();
+                if (text == null) {
+                    Log.e("blacklist", "Can't insert blacklist word, input.getText() was null");
+                    return;
+                }
+
+                text.clear();
+                values.put(DictionaryWordTable.COLUMN_WORD, text.toString());
+                getContentResolver().insert(DictionaryWordContentProvider.CONTENT_URI, values);
+            }
+        });
+        builder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Editable text = input.getText();
+                        if (text != null) {
+                            text.clear();
+                        }
+                        dialog.cancel();
+                    }
+                }
+        );
+
+        addWordDialog = builder.create();
     }
 
     private void fillData() {
@@ -68,38 +113,8 @@ public class DictionaryWordsListActivity extends ListActivity implements
     }
 
     private void addWord() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Enter word");
-
-        final EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
-
-        // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                ContentValues values = new ContentValues();
-                Editable text = input.getText();
-                if (text == null) {
-                    Log.e("blacklist", "Can't insert blacklist word, input.getText() was null");
-                    return;
-                }
-                values.put(DictionaryWordTable.COLUMN_WORD, text.toString());
-                getContentResolver().insert(
-                        DictionaryWordContentProvider.CONTENT_URI, values);
-            }
-        });
-        builder.setNegativeButton("Cancel",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }
-        );
-
-        builder.show();
+        addWordDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        addWordDialog.show();
     }
 
     @Override

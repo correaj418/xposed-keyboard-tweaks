@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Google Keyboard Dictionary Deletes</string>
+    <string name="app_name">Xposed Keyboard Tweaks</string>
     <string name="no_dictionary_words">No deletions added to the dictionary</string>
     <string name="add_dictionary_word">Add</string>
-    <string name="title_activity_dictionary_words_list">DictionaryWordsList</string>
+    <string name="title_activity_dictionary_words_list">Manage Blacklist</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="delete_dictionary_word">Delete</string>
